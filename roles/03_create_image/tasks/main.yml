@@ -1,0 +1,25 @@
+---
+  - include_vars: "{{ playbook_dir }}/config.yml"      
+  - include_vars: "main.yml"  
+
+  - name: Create workdir 
+    file:
+      path: "{{ hypervisor.workdir }}"
+      state: directory
+      mode: "0755"
+          
+  - name: Download iso image file
+    get_url:
+      url: "{{ iso_image.url }}"
+      dest: "/tmp/{{ iso_image.filename}}"
+      timeout: 72000
+                
+  - name: Create installatin bash script
+    template:
+      src: install_system.sh.j2
+      dest: /tmp/install_vm.sh
+      mode: '0755'
+  
+  - name: Install temporary vm
+    shell: |
+      bash /tmp/install_vm.sh 

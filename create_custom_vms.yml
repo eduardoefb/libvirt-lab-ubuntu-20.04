@@ -1,0 +1,12 @@
+# Create everything
+- hosts: hypervisor
+  user: root
+  roles:     
+    - role: 04_create_vms
+
+# Update nodes:
+- hosts: nodes
+  user: ubuntu
+  become: true
+  roles:     
+    - role: 05_update
