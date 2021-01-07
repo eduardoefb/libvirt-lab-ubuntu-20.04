@@ -7,7 +7,7 @@
     <partition>/machine</partition>
   </resource>
   <os>
-    <type arch='x86_64' machine='pc-i440fx-rhel7.6.0'>hvm</type>
+    <type arch='x86_64' >hvm</type>
     <boot dev='hd'/>    
     <boot dev='cdrom'/>
     <bootmenu enable='yes'/>
@@ -19,8 +19,7 @@
   <cpu mode='custom' match='exact' check='full'>
     <model fallback='forbid'>Westmere-IBRS</model>
     <vendor>Intel</vendor>
-    <feature policy='require' name='vme'/>
-    <feature policy='require' name='ss'/>
+    <feature policy='require' name='vme'/>    
     <feature policy='require' name='pclmuldq'/>
     <feature policy='require' name='vmx'/>
     <feature policy='require' name='pcid'/>
@@ -48,7 +47,7 @@
     <suspend-to-disk enabled='no'/>
   </pm>
   <devices>
-    <emulator>/usr/libexec/qemu-kvm</emulator>
+    <emulator>/usr/bin/qemu-system-x86_64</emulator>
 
     {% for d in disk %}   
     <disk type='file' device='disk'>
@@ -138,12 +137,4 @@
       <address type='pci' domain='0x0000' bus='0x00' slot='0x05' function='0x0'/>
     </memballoon>
   </devices>
-  <seclabel type='dynamic' model='selinux' relabel='yes'>
-    <label>system_u:system_r:svirt_t:s0:c285,c762</label>
-    <imagelabel>system_u:object_r:svirt_image_t:s0:c285,c762</imagelabel>
-  </seclabel>
-  <seclabel type='dynamic' model='dac' relabel='yes'>
-    <label>+107:+107</label>
-    <imagelabel>+107:+107</imagelabel>
-  </seclabel>
 </domain>

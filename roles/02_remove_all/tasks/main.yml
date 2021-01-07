@@ -44,4 +44,17 @@
     ignore_errors: yes
     with_items:
       - "{{ network.external }}"
+
+  - name: Delete interfaces for other networks
+    shell: |      
+      ip link del "{{ item.external_interface }}"."{{ item.external_vlan }}" 
+    ignore_errors: yes
+    with_items:
+      "{{ network.external }}"  
+
+  - name: Delete interfaces for oam networks
+    shell: |      
+      ip link del "{{ network.oam.external_interface }}"."{{ network.oam.external_vlan }}" 
+    ignore_errors: yes
+      
           

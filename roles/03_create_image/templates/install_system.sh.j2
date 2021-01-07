@@ -56,7 +56,7 @@ rm -f ${DISK_IMAGE_NAME} 2>/dev/null
 truncate -s ${DISK_SIZE} ${DISK_IMAGE_NAME}
 
 
-/usr/libexec/qemu-kvm \
+ /usr/bin/qemu-system-x86_64 -enable-kvm -smp cpus=8 -m 8192 \
    -no-reboot -m 1024 -drive file=${DISK_IMAGE_NAME},format=raw,cache=none \
    -kernel /mnt/casper/vmlinuz \
    -initrd /mnt/casper/initrd  \

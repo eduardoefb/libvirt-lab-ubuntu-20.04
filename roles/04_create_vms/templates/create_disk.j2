@@ -2,7 +2,9 @@
 
 {% for n in nodes %}
 {% for d in n.disk %}
-\rm -f {{ hypervisor.workdir }}/{{ d.name }} 2>/dev/null
-qemu-img create {{ hypervisor.workdir }}/{{ d.name }} {{ d.size }}
+if [ ! -f {{ hypervisor.workdir }}/{{ d.name }} ]; then
+    qemu-img create {{ hypervisor.workdir }}/{{ d.name }} {{ d.size }}
+fi
+
 {% endfor %}    
 {% endfor %}

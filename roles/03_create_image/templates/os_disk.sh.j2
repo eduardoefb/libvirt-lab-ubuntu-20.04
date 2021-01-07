@@ -4,15 +4,19 @@ export IMAGE_URL="{{ iso_image.url }}"
 export IMAGE_FILE="/tmp/{{ iso_image.filename}}"
 export DISK_IMAGE_NAME="{{ hypervisor.workdir }}/ubuntu.img"
 
+
+
 # Customize image installation:
 cd ${WORK_DIR}
 \rm -f {{ node.disk[0].name }} 2>/dev/null
 cp ${DISK_IMAGE_NAME} {{ node.disk[0].name }}
-losetup /dev/loop0 {{ node.disk[0].name }}
-kpartx -a /dev/loop0
-vgscan
-vgchange -ay ubuntu-vg
-mount /dev/mapper/ubuntu--vg-ubuntu--lv /mnt/
+
+
+umount /mnt 2>/dev/null
+
+start=`fdisk -l {{ node.disk[0].name }} | grep -P 'Linux filesystem' | awk '{print $3}'`
+startb=$(($start*512))
+mount -o loop,rw,offset=${startb} {{ node.disk[0].name }} /mnt/
 
 # Define network:
 \rm -f /mnt/etc/netplan/00-installer-config.yaml 
@@ -55,25 +59,3 @@ EOF
 
 # Umount
 umount /mnt
-
-# Delete partitions
-ftmp=`mktemp`
-vgdisplay > ${ftmp}
-vgname="null"
-vguuid="null"
-while read l; do
-   if [[ "$l" == *"VG Name"* ]]; then
-      vgname=`echo ${l} | awk '{print $NF}'`
-   elif [[ "$l" == *"VG UUID"* ]]; then   
-      vguuid=`echo ${l} | awk '{print $NF}'`
-      if [ "${vgname}" == "ubuntu-vg" ]; then
-         echo "$vgname $vguuid"
-         vgchange -an --select vg_uuid=${vguuid}
-      fi   
-   fi
-done < ${ftmp}
-rm -f ${ftmp}
-
-
-kpartx -d /dev/loop0
-losetup -d /dev/loop0

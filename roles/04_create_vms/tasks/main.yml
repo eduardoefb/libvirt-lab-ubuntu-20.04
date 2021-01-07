@@ -70,16 +70,11 @@
     with_items:      
       - "{{ nodes }}"
 
-  - name: Create disk file script
-    template:
-      src: create_disk.j2
-      dest: "{{ hypervisor.workdir }}/create_disks.sh"
- 
-  - name: Create disks
-    shell:
-      "bash {{ hypervisor.workdir }}/create_disks.sh"      
-    with_items:
-      - "{{ nodes }}"
+  - name: Create workdir 
+    file:
+      path: "{{ hypervisor.workdir }}"
+      state: directory
+      mode: "0755"      
 
   - name: Create disk file script
     template:
@@ -91,12 +86,24 @@
     with_items:
      "{{ nodes }}"
 
+  - name: Create other disk file script
+    template:
+      src: create_disk.j2
+      dest: "/tmp/create_other_disk.sh"
+      mode: "0755"
+ 
+
+
   - name: Execute disk file script
     shell: |
       bash -x "/tmp/{{ item.name }}_os_disk.sh"
     with_items:
      "{{ nodes }}"
     
+  - name: Execute other disk file script
+    shell: |
+      bash -x "/tmp/create_other_disk.sh"
+
   - name: Define virtual machine without iso
     community.libvirt.virt:
       command: define

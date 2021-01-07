@@ -5,12 +5,14 @@
 
 # Clear everything
 - hosts: hypervisor
-  user: root
+  user: cloud
+  become: true
   roles:     
     - role: 02_remove_all
 
 # Create everything
 - hosts: hypervisor
-  user: root
+  user: cloud
+  become: true
   roles:     
     - role: 03_create_image

@@ -1,12 +1,13 @@
 # Create everything
 - hosts: hypervisor
-  user: root
+  user: cloud
+  become: true
   roles:     
     - role: 04_create_vms
 
 # Update nodes:
 - hosts: nodes
-  user: ubuntu
+  user: cloud
   become: true
   roles:     
     - role: 05_update
